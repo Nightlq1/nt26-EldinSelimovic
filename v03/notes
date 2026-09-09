@@ -1,0 +1,12 @@
+DNS-->Ändra adress namnet t.ex WWW.google.com till ip-adress så våran dator kan nå den för att våran dator fattar inte vad WWW.google.com är
+Mac adress är enhetens hårvara adress och ip adress är vart den är. ip adress kan ändras.
+Vad är den första frågan en dator utan adress kan skicka för att hitta en DHCP-SERVER.. DHCPDISCOVER 
+Broadcastadressen 255.255.255.255 skickar vi till denna så skickar vi till alla DHCP använder broadcast ber om ett få svar och 
+När den får svar så ser den subnet ip så kan de kolla vilka ip adresser som finns lediga att använda
+ARP är på läget 2 Data-link DHCP är på läget 7
+CIDR adress 192.168.1.100/26 vad är nätmasken 
+255.255.255.192 255.255.255.0
+Dator har en DHCP client  DORA
+från 0.1 till 0.254 kallas de hostintervallen
+ 
+https://cidr.xyz/
