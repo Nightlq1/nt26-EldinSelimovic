@@ -1,0 +1,37 @@
+device_1 ="SW-Nordvik-1"
+model_1 = "WS-C3560G-48TS"
+role_1 = "Switch, access"
+
+device_2 = "R-Nordvik-1"
+model_2 = "CISCO2951"
+role_2 = "Router, lager 3"
+
+device_3 = "dator_1" 
+model_3 = "Harvey specter3"
+role_3 = "Router, lager 8"
+
+device_4 = "PortAB"
+model_4 = "Hk7843ID"
+role_4 = "Nätverk-4"
+
+device_5 ="NASA"
+model_5= "TERMINAL200"
+role_5 = "Router, lager 500"
+
+device_6 ="tesla"
+model_6 = "KL9922"
+role_6 = "Router, lager 10"
+
+
+print ("UTRUSTNINGSLISTA")
+print ("-" *50) 
+
+
+print (f"{device_1:<16} {model_1:<20} {role_1}")
+print (f"{device_2:<16} {model_2:<20} {role_2}") 
+print (f"{device_3:<16} {model_3:<20} {role_3}")
+print (f"{device_4:<16} {model_4:<20} {role_4}")
+print (f"{device_5:<16} {model_5:<20} {role_5}") 
+print (f"{device_6:<16} {model_6:<20} {role_6}")
+print ("-" * 50)
+print ("Antal enheter: 6")  
