@@ -1,0 +1,194 @@
+Ethernet,Mac och switch fuktion
+
+
+Linux ip addr
+Datalänk:Mac adresser och dataframes ligger här,
+
+Ethernet-Ramen: Den är som ett kuveret, vad kommer den från och vad ska de till så funkar de,
+hela datapaket skickas och vi delar up dom till slices och dom ligger alltid i ordning.
+"Mac huvudet" destination och source länk längden på paketet använder information för att förstå hur mycket den ska läsa av "ftcs"
+Mac bryr sig om vad som ska iväg, men inte switch bara vart den ska Prio är vart den ska
+I Ethernet är en vanlig mac adress 48bitar
+Varje par är hexadecimalt 00=FF
+I klassiska globala EUI-48-block kan de första 24 bitarna vara ett OUI/MA L-prefix
+Format varlerar: Kolon,bindstreck eller Cisco-formatet a4c3.f011,3ab7
+Mac och ip 2 adresser 2 jobb
+Mac lokalt, ip identiferar logiska adresser/prefix och anväds av routrar för nästa hopp ex: klinetnät-def gateaway-internet
+Gate som router
+Switch bryr sig om vem som skickar och vem som ska ta imot informationen som skickades ,om vi inte vet destiantion så göt vi en broadcasting
+och skickar ut till alla portar men var vi redan skickat informationen så letar man bara upp den och skickar de direkt.
+Show mac address-table
+Show mac adress-table adress a4c4.f011.3ab7
+show interfaces status
+Dynamic och static: dynamic betyder inlärd och static: vi lär den 
+Nätversktopologier: Busstopologi: Alla enheter delar på samma gemensamma kabel
+                    Trädtopologi: Flera sjärnnätverk kopplas ihop hierarkiskt
+                    Ringtopologi: Enheterna är kopplade i en ring, där varje enhet har en anslutning till nästa
+                    Meshtopologi: Enheter har flera anslutningar mellan sig.Ger hög redundans eftersom trafik kan ta andra vägaer ifall en länk går sönder
+                    Stjärntopologi: Alla enheter är kopplade till en central switch
+Stjärntoplogi: De är enkelt att felsöka. 
+Träd: lätt att lägga till nya saker, risk om en gren går bort. 
+Mesh: flera vägar
+
+
+Unicast och broadcast
+Unicast är 1 --> 1
+broaddcast är 1 --> alla aka till våran doman
+Unicast kan se ut som broadcast men de är destinationen som bestämmer vad de är.
+
+PC ip: 10.80.76.43 de är min ip
+subent prefix /8 och /21
+Broadcast address: 10.80.72.255
+default gateway/router: 10.80.72.1 det är nerwork address
+Network inteface:Wlo1
+
+Mac addresserna:   a0:ad:9f:52:03:df    28:95:29:bf:4f:37
+  
+lspci -k | grep -A3 -i network: information om datorns nätverkskort och drivrutin
+lspci -k: visar all PCI-enheter i datorn och vilken drivrutin avänds av datorn
+lspci -nnk | grep -A4 -i network: visar mer information
+nmcli är ett verktyg för att kontrollera och konfigurera nätverk via terminalen.
+nmcli dev wifi connect AP5 password '12345678': anslut till Wi-Fi-nätverket AP5 med lösenordet 12345678.
+
+Sudo apt install -blah blah för att laddar ner något som super användare.
+
+
+
+1.Förklara vad en Mac-address är och var switch lagrar dem- Mac addressen är enhetenshårdvara
+2.Läsa show mac address-table och säga vilken enhet som sitter på vilken port.
+3.Fånga trafik i wireshark och peka ut avsändarens och mottagarens MAC-adress i en ram.
+4.Förklara vad ARP gör och varför de behövs. "ARP används när vi känner till destinations-IP:t men inte MAC-adressen. -->
+Datorn skickar då en broadcast i det lokala nätet och frågar vilken enhet som har IP-adressen. Den rätta enheten svarar med sin MAC-adress."
+
+1.Mottagarens adress står alltid först i en dataram.
+
+2.12 hexadecimala tecken har den, första halvan är 6tecken som kallas för OUI (Organizationally Unique identifier)
+
+3.Switchen fyller i sin tabell helt själv och helt automatiskt genom en process som kallas MAC-inlärning. Och den får sina anteckningarna direkt från den inkommande nätverkstrafiken.
+
+4.Switchen flödar ramen (unknown unicast flooding) genom att skicka ut en kopia på alla aktiva portar, förutom den port som ramen kom in på.
+
+5.Den sitter kvar i 5minuter och den försvinner om switchen inte ser någon trafik från enheten under den tiden. Det görs för att hålla MAC-tabellen uppdaterad.
+
+6.Vid broadcast används MAC-adressen FF:FF:FF:FF:FF:FF. Det betyder att meddelandet ska skickas till alla enheter i det lokala nätverket. 
+
+7.ARP-frågan går till alla eftersom datorn inte vet vilken enhet som har den IP-adress den söker. ARP-svaret går till en eftersom den rätta enheten svarar med sin MAC-adress. 
+
+8.Den frågar efter routerns MAC-adress (default gateway)
+
+9.Dynamic och static: 
+Dynamic betyder inlärd 
+Static: vi lär den 
+
+10. port visar notconnect kan va för kabel är trasig kabel sitter i fel port.
+
+11 Fel VLAN
+
+12.gi0/2 för att den har half medan dom andra har full
+
+13. När en switch får en ram för första gången vet den inte vilken port mottagaren finns på.
+Därför skickar switchen ramen till alla portar.
+När mottagaren svarar lär sig switchen vilken port mottagaren finns på.
+Switchen sparar denna information i sin tabell i 5 minuter bara.
+Nästa gång kan switchen skicka ramen direkt till rätt port.
+
+
+harvey(config-if)#Interface Gigabitethernet0/0
+harvey(config-if)#ip address 192.168.10.1 255.255.255.0
+harvey(config-if)#no shutdown
+harvey(config)#ip dhcp pool LAN
+harvey(dhcp-config)#network 192.168.10.1 255.255.255.0
+harvey(dhcp-config)#default-router 192.168.10.1
+harvey(dhcp-config)#dns-server 192.168.10.1
+harvey(dhcp-config)#dns-server 8.8.8.8
+harvey(dhcp-config)#exit
+harvey(config)#end
+
+
+
+configure terminal – Går in i konfigurationsläget.
+hostname Harvey – Ändrar namnet på enheten till andre.
+interface vlan 1 – Går in på VLAN 1-interfacet.
+ip address 168.173.1.10 255.255.255.0 – Ger interfacet IP-adress och subnet mask.
+no shutdown – Slår på ett interface/port.
+shutdown – Stänger av ett interface/port.
+interface fastethernet 0/1 – Går in på FastEthernet-port 0/1.
+interface gigabitethernet 0/1 – Går in på GigabitEthernet-port 0/1.
+show ip interfaenable – Går in i privileged EXEC-läge (#).
+ce brief – Visar snabb översikt över portar, IP-adresser och up/down-status.
+show interfaces fastethernet 0/1 – Visar detaljerad information om Fa0/1.
+show interfaces vlan 1 – Visar detaljerad information om VLAN 1-interfacet.
+show running-config – Visar konfigurationen som används just nu.
+ip default-gateway 192.168.1.1 – Anger switchens default gateway.
+ping 192.168.1.2 – Testar om du kan nå IP-adressen.
+exit – Går tillbaka ett steg.
+end – Går direkt tillbaka till #-läget.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Tänk dig att hela ditt nätverk är en stor postvärld där datorer vill skicka brev till varandra. 
+För att breven ska hitta rätt har du byggt vägar, ställt ut postterminaler och skrivit kartinstruktioner.
+
+Enheterna i din nätverksvärld
+
+Datorerna och Servrarna (Husen): De är avsändare och mottagare i nätverket (Server0, PC2, PC3, Server1). 
+De vill prata genom att skicka paket med datainnehåll.
+
+Switchen (Postsorteraren i trappuppgången): Arbetar på Lager 2. 
+Den bryr sig bara om vad prylar heter "på riktigt" (fysiska MAC-adresser). 
+Den skickar snabbt brev mellan datorer som bor i samma kvarter utan att bry sig om vilket postnummer de har.
+
+Routrarna (Postterminalerna): Arbetar på Lager 3. 
+De läser av postnummer (IP-adresser) och behövs så fort ett paket ska lämna sin egen stad och resa till en annan.
+
+Subnät – De fyra städerna
+En router stänger ute trafik och delar upp världen i isolerade områden. Du har byggt fyra städer (subnät):
+
+    Stad 1 (192.168.1.0): Kvarteret längst till vänster där Server0 bor.
+
+    Stad 2 (192.168.2.0): Mittenstaden där PC-datorerna, switchen och Router1 möts.
+
+    Stad 3 (192.168.3.0): Vägen som kopplar ihop mitten med Router2.
+
+    Stad 4 (192.168.4.0): Kvarteret längst till höger där Server1 bor.
+
+Adresser och Kartskyltar
+
+
+IP-adress (Gatuadressen): Alla enheter har en gatuadress. 
+De första tre siffergrupperna visar vilken stad enheten bor i, och den sista siffran visar vilket hus det är (t.ex. 192.168.1.1).
+
+Default Gateway (Dörren ut): Om en dator vill skicka ett brev till en annan stad vet den inte vägen på egen hand. 
+Den lämnar alltid brevet till sin "Default Gateway" (routerns dörr i den staden) som tar över ansvaret.
+
+Routingtabellen (Kartboken): Routerns minne. 
+Bokstaven C visar städer som ligger direkt utanför routerns egna dörrar.
+Bokstaven S visar de vägskyltar du har spikat upp manuellt: "Om paketet ska till Stad 4, skicka det åt det här hållet".
+
+ (Next-Hop)
+Att skicka paket mellan routrar fungerar som ett stafettlopp.
+Router1 kan inte kasta paketet ända fram till slutdestinationen direkt. 
+Den måste räcka över paketet till sin närmsta granne i samma korsning (192.168.2.2). Grannen tar emot stafettpinnen,
+kollar i sin egen kartbok och springer sista biten med paketet.
