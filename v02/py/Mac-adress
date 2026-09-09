@@ -1,0 +1,23 @@
+vendors = {
+    "0004.9a": "Intel",
+    "000a.41": "Hewlett packard",
+    "0090.2b": "Cisco systems",
+}
+
+# MAC-adresser direkt kopierade från switchen
+addresses = [
+    "0004.9a9e.c601",
+    "000a.413b.9d5c",
+    "0090.2b7b.c391",
+]
+
+for address in addresses:
+    # Plockar ut "0004.9a" direkt från Cisco-formatet
+    prefix = address[0:7]
+
+    if prefix in vendors:
+        name = vendors[prefix]
+    else:
+        name = "okand tillverkare"
+
+    print(f"{address} --> {name}")
