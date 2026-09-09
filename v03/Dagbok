@@ -1,0 +1,7 @@
+1.Första dagen så var de mycket med packet tracer och läste i boken.
+2.Gjorde kontrollfrågorna och skrev ner dom och läste mer i boken och försökte få alla kontrollfrågor att verkligen fastna.
+3.Körde mer packet tracer sen mer i boken läste mig på allt subnet är svårt för mig så tränade mer på de för att jag skulle förstå de men behöver lite mer tid på de.
+Återblick
+Running-config är vad är just nu när du köra switchen/ startup-config är vad du ska sätta sen nästa gång du startar upp den blir de på dom inställingarna du har lagt på
+Switch arbetar på lager 2 och router arbetar på lager 3.
+Den frågar efter den default gateway aka (FF:FF:FF:FF:FF:FF)
