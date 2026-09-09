@@ -1,0 +1,3 @@
+Dag 1:Gjorde mycket python förksökte på mig att göra några saker själv för att se ifall de sitter och läste lite i boken samt osi lagren pluggade på dom.
+Dag 2: Då var jag mycket inne i terminalen så jag skulle bli bekväm med kommandon så de sitter i huvudet,samnt läste boken och pluggade mer på osi-lagren
+Dag 3: Mycket med boken och forsatte lite mer på python och terminalen för att bli säker på allt som jag har gjort och mer osi-lagren,försökte skirva lite egen kod men kommer inte vidare
