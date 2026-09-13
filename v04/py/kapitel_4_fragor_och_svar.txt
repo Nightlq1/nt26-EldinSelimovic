@@ -1,0 +1,142 @@
+Kapitel 4 – VLAN och trunkar Frågor och svar från sida 81–82 / facit
+
+4.1 Vad är skillnaden mellan ett VLAN och ett IP-nät? 
+
+Svar: Ett VLAN är
+lager 2 och bestämmer vilka portar som hör ihop. Ett IP-nät är lager 3
+och handlar om IP-adresser. De används ofta tillsammans, men är två
+olika saker.
+
+4.2 Vad skiljer en access-port från en trunk? 
+
+Svar: En access-port
+tillhör ett enda VLAN och används normalt för datorer. En trunk kan bära
+flera VLAN samtidigt och används mellan exempelvis switchar eller mellan
+switch och router.
+
+4.3 Vilka två rader behövs för att lägga en port i ett VLAN, och varför
+räcker inte den ena? 
+Svar: switchport mode access switchport access vlan
+
+Den första gör porten till en access-port och den andra bestämmer vilket
+VLAN den ska tillhöra. Utan den första kan porten stå kvar i automatiskt
+läge.
+
+4.4 Vad gör taggningen, och var i nätet finns taggen? 
+
+Svar: Taggningen
+skriver VLAN-numret i ramen. Taggen finns på trunkar, exempelvis mellan
+switchar eller till en router. Den läggs till när ramen går in på
+trunken och tas bort innan ramen går ut genom en access-port.
+
+4.5 Varför ska en trunk aldrig kopplas till en dator? 
+
+Svar: Därför att
+en vanlig dator inte är tänkt att hantera de taggade ramarna från
+trunken. Då kan ramarna kastas eller behandlas fel och kommunikationen
+slutar fungera.
+
+4.6 Vad är native VLAN, och vad är standardvärdet? 
+
+Svar: Native VLAN är
+det VLAN vars trafik går otaggad över trunken. Standardvärdet på
+Cisco-switchar är VLAN 1.
+
+4.7 Vad går fel om två switchar har olika native VLAN? 
+
+Svar: Otaggad
+trafik kan hamna i fel VLAN. Mellan Cisco-switchar kan STP upptäcka
+problemet och stänga av de berörda VLAN:en på porten, och man kan få
+RECV_PVID_ERR i loggen.
+
+4.8 Vad förhindrar STP, och hur gör den det? 
+
+Svar: STP förhindrar
+loopar, alltså att ramar går runt i nätverket i en cirkel för alltid.
+STP blockerar de portar som skulle skapa loopen och kan öppna dem igen
+om den aktiva vägen går sönder.
+
+4.9 Vad betyder BLK i show spanning-tree, och vad ska du göra åt det?
+
+Svar: BLK betyder att STP avsiktligt har blockerat porten för att
+förhindra en loop. Du ska inte göra något åt det. Porten fungerar som
+reservväg.
+
+4.10 Vad händer om du kör switchport trunk allowed vlan två gånger med
+olika nummer? 
+
+Svar: Den andra listan skriver över den första. Vill du
+lägga till ett VLAN utan att ta bort de tidigare använder du add.
+
+Exempel: switchport trunk allowed vlan add 20
+
+4.11 Skriv de engelska termerna för access-port, trunk, taggning, native
+VLAN och root bridge. 
+
+Svar: access port, trunk, tagging, native VLAN,
+root bridge.
+
+4.12 Nordviks fyra VLAN delar 192.168.1.0/24 i fyra lika stora delar.
+
+VLAN 10 Nätadress: 192.168.1.0/26 Gateway: 192.168.1.1 Första användbara
+IP: 192.168.1.1 Sista användbara IP: 192.168.1.62 Broadcast:
+192.168.1.63
+
+VLAN 20 Nätadress: 192.168.1.64/26 Gateway: 192.168.1.65 Första
+användbara IP: 192.168.1.65 Sista användbara IP: 192.168.1.126
+Broadcast: 192.168.1.127
+
+VLAN 30 Nätadress: 192.168.1.128/26 Gateway: 192.168.1.129 Första
+användbara IP: 192.168.1.129 Sista användbara IP: 192.168.1.190
+Broadcast: 192.168.1.191
+
+VLAN 99 Nätadress: 192.168.1.192/26 Gateway: 192.168.1.193 Första
+användbara IP: 192.168.1.193 Sista användbara IP: 192.168.1.254
+Broadcast: 192.168.1.255
+
+Blockstorleken för /26 är 64.
+4.13 Ekonomiavdelningen växer till 70 datorer. Räcker /26? 
+
+Svar: Nej./26 ger 64 adresser totalt och 62 användbara. För 70 datorer behövs
+minst /25, som ger 128 adresser totalt och 126 användbara.
+
+
+
+4.14  Här är ett utdrag från två switchar som är hopkopplade. Datorer i VLAN 20 når inte varandra över trunken, men VLAN 10 fungerar. Vad är fel? SW-Nordvik-1# show interfaces trunk Port Vlans allowed on trunk Gi0/24 10,30,99 SW-Nordvik-2# show interfaces trunk Port Vlans allowed on trunk Gi0/24 10,20,30,99
+
+Svar: VLAN 20 saknas på trunken på SW-Nordvik-1. Båda sidor av trunken måste tillåta VLAN 20.
+
+4.15 Här är ett utdrag från en switch. En dator i port Gi0/5 får ingen
+adress från DHCP-servern, som sitter i VLAN 10. Vad frågar du efter härnäst?
+
+Svar: Kontrollera vilket VLAN port Gi0/5 tillhör. Den ligger i VLAN 1, men datorn behöver ligga i VLAN 10 för att nå DHCP-servern.
+
+4.16
+Skriv den fullständiga konfigurationen för trunken
+mellan SW-Nordvik-1 och SW-Nordvik-2. Den ska bära VLAN 10, 20, 30 och 99, ha
+native VLAN 999 och inte förhandla om läget. Skriv varje rad, i rätt ordning, från
+configure terminal till end.
+
+configure terminal
+interface  GigabitEthernet0/20
+switchport trunk encapsulation dot1q
+switchport mode trunk
+switchport trunk native vlan 999
+switchport trunk allowed vlan 10,20,30,99
+switchport nonegotiate
+end
+
+4.17  Port Gi0/11 till Gi0/14 på SW-Nordvik-1 ska läggas i
+VLAN 20 och slippa vänta på STP när en dator kopplas in. Skriv konfigurationen
+med så få rader som möjligt.
+
+
+interface range GigabitEthernet0/11 - 14
+switchport mode access
+switchport access vlan 20
+
+4.18
+
+Tre VLAN behövs: gäst, ekonomi och drift. Portarna ska läggas i rätt VLAN och VLAN:en ska tillåtas på trunken. VLAN kan separera näten, men kan inte ensamt ge gästerna internet. För internet krävs routing och för att blockera gästerna från de interna näten krävs en ACL.
+
+
