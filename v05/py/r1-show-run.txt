@@ -1,4 +1,4 @@
-Current configuration : 1142 bytes
+Current configuration : 1683 bytes
 !
 version 15.1
 no service timestamps log datetime msec
@@ -10,7 +10,22 @@ hostname R-Nordvik-1
 !
 !
 !
+ip dhcp excluded-address 192.168.1.1 192.168.1.19
+ip dhcp excluded-address 192.168.1.65 192.168.1.79
+ip dhcp excluded-address 192.168.1.129 192.168.1.139
 !
+ip dhcp pool KONTOR
+ network 192.168.1.0 255.255.255.192
+ default-router 192.168.1.1
+ dns-server 192.168.1.1
+ip dhcp pool EKONOMI
+ network 192.168.1.64 255.255.255.192
+ default-router 192.168.1.65
+ dns-server 192.168.1.65
+ip dhcp pool GAST
+ network 192.168.1.128 255.255.255.192
+ default-router 192.168.1.129
+ dns-server 192.168.1.129
 !
 !
 !
@@ -63,10 +78,9 @@ interface GigabitEthernet0/0.99
  ip address 192.168.1.193 255.255.255.192
 !
 interface GigabitEthernet0/1
- no ip address
+ ip address 203.0.113.10 255.255.255.0
  duplex auto
  speed auto
- shutdown
 !
 interface GigabitEthernet0/2
  ip address 10.0.0.1 255.255.255.252
@@ -79,6 +93,7 @@ interface Vlan1
 !
 ip classless
 ip route 192.168.2.0 255.255.255.0 10.0.0.2 
+ip route 0.0.0.0 0.0.0.0 203.0.113.1 
 !
 ip flow-export version 9
 !
