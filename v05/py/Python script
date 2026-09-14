@@ -1,0 +1,15 @@
+filnamn = "r1-show-run.txt"
+
+routes = []
+
+# with ser till att filen stängs igen när vi är klara
+with open(filnamn) as f:
+    for rad in f:
+        # strip tar bort mellanslag och radbrytning i båda ändar
+        rad = rad.strip()
+        if rad.startswith("ip route "):
+            routes.append(rad)
+
+print(f"Hittade {len(routes)} statiska rutter:")
+for rad in routes:
+    print(f"  {rad}")
