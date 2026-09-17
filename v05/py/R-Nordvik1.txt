@@ -1,11 +1,6 @@
-NORDVIK – ALLA KOMMANDON I REKOMMENDERAD ORDNING
+NORDVIK – ALLA KOMMANDON 
 Packet Tracer – Göteborg + Borås + ISP + STP
 
-==================================================
-1. SKAPA VLAN PÅ SW-NORDVIK-1 OCH SW-NORDVIK-2
-==================================================
-
-Kör på båda Göteborg-switcharna:
 
 enable
 configure terminal
