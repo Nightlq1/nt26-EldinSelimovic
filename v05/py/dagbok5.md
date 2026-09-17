@@ -1,6 +1,6 @@
 Dag1:Packet tracer med routing och fixade med stp och gateway of last resort sedan blev de också att läsa om boken och gjorde klart python scripten och fick den att fungerar men tror dock de var lite fel i själv scriptet för kan inte köra den in vsc bara in powershell på min dator hemma, kunde inte lösa de i vsc så skippar de för nu,och började lite på kontrollfrågorna.
 Dag2: Var de mycket läsa i boken och mycket kontrollfrågor efter de blev de hjälpa en klasskompis att fixa all uppgifter och lägga up de på github så att du skulle kunna se de,blev lite mer i boken också.
-Dag3: Mer kontrollfrågor och byggde ett helt ny nätverk från grunden alttså vecka 2-5 i packet tracer och fixade kommandon i vsc så kan snabbt kolla vilken kommando som kommer efter ifall jag har gjort fel eller behöver hjälp har också skriver ner felsöknings komandon så att jag kan felsöka utan problem.
+Dag3: Mer kontrollfrågor och byggde ett helt ny nätverk från grunden alttså vecka 2-5 i packet tracer och fixade kommandon i vsc så kan snabbt kolla vilken kommando som kommer efter ifall jag har gjort fel eller behöver hjälp har också skriver ner felsöknings komandon så att jag kan felsöka utan problem.På dag 3 märkte jag att jag hade glömt stp så gick in o fixade de på kvällen
 Återblick:
 1.Default gateway skickar trafik vidare till andra nätverk utanför sitt egna,Utan gateway kan datorn bara kommunicera med sina egna nätverk.
 2.Nätadress: 192.168.1.64  Broadcast: 192.168.1.127 
