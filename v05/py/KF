@@ -1,0 +1,59 @@
+5.1 vad gör en router som en switch inte gör? den kommunicerar via ip addresser som i sin tur innebär att det kan skicka trafik mellan olika nät. den tillhör layer 3. Macaddresser fyttar runkt trafik inom sitt egna nät, 
+
+5.2 vad betyder bokstaven c respektive s i routingtabellen? 
+bokstaven c betyder connected och s betyder statisk vilket innebär att någon lagt dit den för hand.
+
+5.3 varför får du två rader när du sätter en address på ett interface? 
+en c-rad för nätet och en L-rad för routerns egna address i nätet. L-raden har alltid /32 och finns där för att routern ska veta vad som är till den själv. 
+
+5.4 vad betyder longest prefix match, och vilken rad vinner om två passar? 
+då det är det den med störst prefix då den är mer exakt. 
+
+5.5 varför är 0.0.0.0/0 alltid den sista utvägen? 
+för att den passar alla och kan bli fel då nollan betyder att ingen del av adressen behöver stämma och är därför den sämsta träffen. 
+
+5.6 vad är ett sub-interface och varför behövs det på en router med få portar? 
+Det innebär att du delar upp en fysisk port i olika virtuella delar för olika VLAN. Man kan i princip tänka att man delar upp kabeln virtuellt, så att porten kan hantera flera VLAN genom en enda fysisk kabel istället för att behöva flera portar från routern, en för varje VLAN, och för att det ska kunna vara gateway för flera vlan över en enda kabel. 
+
+5.7 Vilken rad måste komma före adressen på ett sub-interface, och varför? 
+encapsulation dot1q "vlan" annars den vet routern inte vilket VLAN interfacet hör till, och den vägrar ta emot addressen. 
+
+5.8 En ping ger inget svar, Vilka två saker kan ha gått fel? 
+Antingen kom paketet aldrig fram eller så kom svaret aldrig tillbaka. En ping är två resor och du vet bara att minst en av dem misslyckades. Om man kopplar det till detta kapitel skulle jag kolla att gateway-adresserna på de olika interfacen är rätt, att datorerna ligger i rätt VLAN och framför allt att routrarna har en route både dit och tillbaka.
+
+5.9 vad är en blackhole-rutt, och varför är den svår att hitta?
+en rutt som pelar mot ett nästa hopp som inte finns eller inte vet vägen vidare. Den är svår att hitta eftersom raden ser helt korrekt ut i tabellen - routern kontrollerar aldrig nästa hopp svarar. 
+
+5.10 vad visar tracerroute som ping inte visar? 
+vart det tog slut, ping meddelar bara att det inte kom fram, tracerout är en som en ping fast det beskriver hur långt det kom och vilken router som var den sista som svarade. 
+
+5.11 skriv den engelska termen för vart och ett av följande :routing-tabell ansluten rutt, statisk, nästa hopp och sub inter-face provet frågar efter dom. 
+routing table, connected .static rout, next hop, sub interface 
+
+5.12 länken mellan Götenorg och borås är 10.0.0.0/30.Hur många adresser innehåller nätet, hur många av dem a går att sätta på ett interface, och vilka är de? Räkna, skriv inte av. 
+Det är fyra adresser, 0–3. Två av dem går att sätta på interface, 10.0.0.1 och 10.0.0.2. /30 används ofta på en länk mellan två routrar eftersom man bara behöver två användbara IP-adresser, en på varje router.
+
+5.13 en kollega föreslår 10.0.0.0/24 till länken istället. Räkna ut hur många adresser som då står oanvända och skriv en mening om varför det ändå kan vara ett rimligt val i ett stort nät. 
+det blir 252 oanvända och det enda rimliga är ifall man skall ha 252 routar som routar emellan. 
+Det blir 252 användbara adresser som står oanvända. I ett stort nät kan /24 ändå vara ett rimligt val om man har många routerlänkar, eftersom man då kan ge varje länk ett eget /24 och få en enklare och mer enhetlig adressplan.ifall man har flera länkar mellan olika städer kan man bara skriva 3.1 - 3.2 och 4.1-4.2 osv. 
+
+5.14 här är en routingtabell. Ett paket ska till 192.168.2.50 vilken rad används och vad händer med paketet? 
+raden som används är den andra: s 192.168.2.0/24 via 10.0.0.2 och den 4 raden då 10.0.0.0/30 is directly connected och den går via g0/2. 
+
+5.15 Här är ett utdrag från Nordviks router. Datorer i vlan 20 når varandra men inte sin gateway varför? 
+encapsulation är dot1q 21 det ska vara dot1q 20. 
+
+5.16 skriv den fullständiga konfigurationen för sub-interfacet mot vlan 30 på R-Nordvik-1 rätt namm, rätt VLAN, rätt address och rätt mask. 
+interface g0/0.30 encapsultaion dot1q 30 
+ip address 192.168.129 255.255.255.192
+
+5.17. Skriv det två rutter som behövs för att göteborg ska behövs för att Göteborg och borås ska nå varandra - en på varje router Ange på vilken router varje rad ska skrivas. 
+göteborg mot borås. ip route 192.168.2.0/ 24 via 10.0.0.2
+borås mot göteborg ip rpute 192.168.1.0/24 via 10.0.0.1
+
+5.18 Nordviks ekonomi avdelning ska kunna nå filserver i kontorsnätet kontorsk personal ska inte kunna nå ekonomi nätet. driftpersonalen ska nå bägge.Beskriv vad du kan lösa med routing den här veckan och som måste vänta till kapitel 9 skriv den configurationen som du fakstiskt kan göra nu. 
+jag kan fixa så att ekonmi når filservern via subnet men då routar den mellan alla nät så alla kan nå varandra vet inte hur jag ska dela upp det så att viss får tillgång och vissa inte. 
+
+5.19 skriv fem meningar till en kollega som aldrig hört talas om routing, där du förkalrar varför en ping kan nå fram utan att komma tillbaka
+
+för att ena routern kan vara rätt konfiugerar och komma fram men om den andra inte har en väg tillbaka så kommer det inte fram. 
