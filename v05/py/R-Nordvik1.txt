@@ -1,0 +1,565 @@
+NORDVIK – ALLA KOMMANDON I REKOMMENDERAD ORDNING
+Packet Tracer – Göteborg + Borås + ISP + STP
+
+==================================================
+1. SKAPA VLAN PÅ SW-NORDVIK-1 OCH SW-NORDVIK-2
+==================================================
+
+Kör på båda Göteborg-switcharna:
+
+enable
+configure terminal
+vlan 10
+name KONTOR
+vlan 20
+name EKONOMI
+vlan 30
+name GAST
+vlan 99
+name DRIFT
+vlan 999
+name NATIVE
+end
+
+
+==================================================
+2. SKAPA VLAN PÅ SW-NORDVIK-3
+==================================================
+
+enable
+configure terminal
+vlan 10
+name KONTOR
+vlan 20
+name EKONOMI
+vlan 30
+name GAST
+vlan 99
+name DRIFT
+vlan 999
+name NATIVE
+end
+
+
+==================================================
+3. ACCESSPORTAR I GÖTEBORG
+==================================================
+
+VLAN 10 KONTOR – Fa0/1 på SW-Nordvik-1 och SW-Nordvik-2:
+
+configure terminal
+interface fa0/1
+switchport mode access
+switchport access vlan 10
+spanning-tree portfast
+no shutdown
+end
+
+VLAN 20 EKONOMI – Fa0/2 på SW-Nordvik-1 och SW-Nordvik-2:
+
+configure terminal
+interface fa0/2
+switchport mode access
+switchport access vlan 20
+spanning-tree portfast
+no shutdown
+end
+
+VLAN 30 GAST – Fa0/3 på SW-Nordvik-1 och SW-Nordvik-2:
+
+configure terminal
+interface fa0/3
+switchport mode access
+switchport access vlan 30
+spanning-tree portfast
+no shutdown
+end
+
+
+==================================================
+4. TRUNK MELLAN SW-NORDVIK-1 OCH SW-NORDVIK-2
+==================================================
+
+SW-Nordvik-1 – Gi0/2:
+
+enable
+configure terminal
+interface gi0/2
+switchport trunk encapsulation dot1q
+switchport mode trunk
+switchport trunk native vlan 999
+switchport trunk allowed vlan 10,20,30,99
+switchport nonegotiate
+no shutdown
+end
+
+SW-Nordvik-2 – Gi0/1:
+
+enable
+configure terminal
+interface gi0/1
+switchport trunk encapsulation dot1q
+switchport mode trunk
+switchport trunk native vlan 999
+switchport trunk allowed vlan 10,20,30,99
+switchport nonegotiate
+no shutdown
+end
+
+
+==================================================
+5. TRUNK SW-NORDVIK-1 TILL R-NORDVIK-1
+==================================================
+
+SW-Nordvik-1 – Gi0/1:
+
+enable
+configure terminal
+interface gi0/1
+switchport trunk encapsulation dot1q
+switchport mode trunk
+switchport trunk native vlan 999
+switchport trunk allowed vlan 10,20,30,99
+switchport nonegotiate
+no shutdown
+end
+
+
+==================================================
+6. BYGG STP-TRIANGELN
+==================================================
+
+SW-Nordvik-1 – trunk mot SW-Nordvik-3:
+
+enable
+configure terminal
+interface fa0/24
+switchport trunk encapsulation dot1q
+switchport mode trunk
+switchport trunk native vlan 999
+switchport trunk allowed vlan 10,20,30,99
+switchport nonegotiate
+no shutdown
+end
+
+SW-Nordvik-2 – trunk mot SW-Nordvik-3:
+
+enable
+configure terminal
+interface fa0/24
+switchport trunk encapsulation dot1q
+switchport mode trunk
+switchport trunk native vlan 999
+switchport trunk allowed vlan 10,20,30,99
+switchport nonegotiate
+no shutdown
+end
+
+SW-Nordvik-3 – båda trunkarna:
+
+enable
+configure terminal
+interface fa0/23
+switchport trunk encapsulation dot1q
+switchport mode trunk
+switchport trunk native vlan 999
+switchport trunk allowed vlan 10,20,30,99
+switchport nonegotiate
+no shutdown
+
+interface fa0/24
+switchport trunk encapsulation dot1q
+switchport mode trunk
+switchport trunk native vlan 999
+switchport trunk allowed vlan 10,20,30,99
+switchport nonegotiate
+no shutdown
+end
+
+
+==================================================
+7. STP ROOT PRIMARY OCH SECONDARY
+==================================================
+
+SW-Nordvik-1 – Root Primary:
+
+enable
+configure terminal
+spanning-tree vlan 10,20,30,99 root primary
+end
+
+show spanning-tree vlan 10
+
+SW-Nordvik-2 – Root Secondary:
+
+enable
+configure terminal
+spanning-tree vlan 10,20,30,99 root secondary
+end
+
+show spanning-tree vlan 10
+
+Slutresultat:
+
+SW-Nordvik-1 = Root Primary
+SW-Nordvik-2 = Root Secondary
+SW-Nordvik-3 = vanlig STP-switch
+
+STP-begrepp:
+
+Root = Root Port
+Desg = Designated Port
+Altn = Alternate Port
+FWD = Forwarding
+BLK = Blocking
+
+
+==================================================
+8. ROUTER-ON-A-STICK – R-NORDVIK-1
+==================================================
+
+enable
+configure terminal
+
+interface gi0/0
+no ip address
+no shutdown
+
+interface gi0/0.10
+encapsulation dot1Q 10
+ip address 192.168.1.1 255.255.255.192
+
+interface gi0/0.20
+encapsulation dot1Q 20
+ip address 192.168.1.65 255.255.255.192
+
+interface gi0/0.30
+encapsulation dot1Q 30
+ip address 192.168.1.129 255.255.255.192
+
+interface gi0/0.99
+encapsulation dot1Q 99
+ip address 192.168.1.193 255.255.255.192
+
+end
+
+
+==================================================
+9. MANAGEMENT-IP – VLAN 99
+==================================================
+
+SW-Nordvik-1:
+
+configure terminal
+interface vlan 99
+ip address 192.168.1.194 255.255.255.192
+no shutdown
+exit
+ip default-gateway 192.168.1.193
+end
+
+SW-Nordvik-2:
+
+configure terminal
+interface vlan 99
+ip address 192.168.1.195 255.255.255.192
+no shutdown
+exit
+ip default-gateway 192.168.1.193
+end
+
+
+==================================================
+10. DHCP – R-NORDVIK-1
+==================================================
+
+VLAN 10 KONTOR:
+
+configure terminal
+ip dhcp excluded-address 192.168.1.1 192.168.1.19
+ip dhcp pool KONTOR
+network 192.168.1.0 255.255.255.192
+default-router 192.168.1.1
+dns-server 192.168.1.1
+end
+
+VLAN 20 EKONOMI:
+
+configure terminal
+ip dhcp excluded-address 192.168.1.65 192.168.1.79
+ip dhcp pool EKONOMI
+network 192.168.1.64 255.255.255.192
+default-router 192.168.1.65
+dns-server 192.168.1.65
+end
+
+VLAN 30 GAST:
+
+configure terminal
+ip dhcp excluded-address 192.168.1.129 192.168.1.139
+ip dhcp pool GAST
+network 192.168.1.128 255.255.255.192
+default-router 192.168.1.129
+dns-server 192.168.1.129
+end
+
+Sätt sedan klienterna i VLAN 10, 20 och 30 på DHCP.
+
+
+==================================================
+11. GÖTEBORG TILL BORÅS – /30-LÄNK
+==================================================
+
+R-Nordvik-1 – Gi0/2:
+
+enable
+configure terminal
+interface gi0/2
+ip address 10.0.0.1 255.255.255.252
+no shutdown
+end
+
+R-Boras-1 – Gi0/0:
+
+enable
+configure terminal
+interface gi0/0
+ip address 10.0.0.2 255.255.255.252
+no shutdown
+end
+
+Test:
+
+ping 10.0.0.2
+
+
+==================================================
+12. BORÅS – VLAN 40 LAGER
+==================================================
+
+SW-Boras-1 – skapa VLAN:
+
+enable
+configure terminal
+vlan 40
+name LAGER
+end
+
+SW-Boras-1 – trunk Gi0/1 mot R-Boras-1:
+
+configure terminal
+interface gi0/1
+switchport trunk encapsulation dot1q
+switchport mode trunk
+switchport trunk allowed vlan 40
+no shutdown
+end
+
+R-Boras-1 – gateway VLAN 40:
+
+configure terminal
+interface gi0/1
+no shutdown
+
+interface gi0/1.40
+encapsulation dot1Q 40
+ip address 192.168.2.1 255.255.255.192
+end
+
+SW-Boras-1 – PC8 på Fa0/1:
+
+configure terminal
+interface fa0/1
+switchport mode access
+switchport access vlan 40
+spanning-tree portfast
+no shutdown
+end
+
+PC8 statisk IP:
+
+IP Address:      192.168.2.10
+Subnet Mask:     255.255.255.192
+Default Gateway: 192.168.2.1
+
+
+==================================================
+13. STATISKA RUTTER GÖTEBORG ↔ BORÅS
+==================================================
+
+R-Nordvik-1:
+
+configure terminal
+ip route 192.168.2.0 255.255.255.0 10.0.0.2
+end
+
+R-Boras-1:
+
+configure terminal
+ip route 192.168.1.0 255.255.255.0 10.0.0.1
+end
+
+
+==================================================
+14. ISP OCH DEFAULT ROUTE
+==================================================
+
+R-Nordvik-1 – Gi0/1:
+
+configure terminal
+interface gi0/1
+ip address 203.0.113.10 255.255.255.0
+no shutdown
+end
+
+R-ISP – Gi0/1:
+
+configure terminal
+interface gi0/0
+no ip address
+
+interface gi0/1
+ip address 203.0.113.1 255.255.255.0
+no shutdown
+end
+
+R-Nordvik-1 – default route:
+
+configure terminal
+ip route 0.0.0.0 0.0.0.0 203.0.113.1
+end
+
+
+==================================================
+15. KONTROLL OCH FELSÖKNING
+==================================================
+
+På routrar:
+
+show ip interface brief
+show ip route
+show running-config
+show ip dhcp binding
+
+På switchar:
+
+show vlan brief
+show interfaces trunk
+show spanning-tree
+show spanning-tree vlan 10
+show running-config
+
+Pingtester:
+
+ping 10.0.0.2
+ping 192.168.2.10
+ping 203.0.113.1
+
+På PC:
+
+tracert 192.168.2.10
+
+
+==================================================
+16. STP FAILOVER-TEST
+==================================================
+
+På SW-Nordvik-2:
+
+enable
+configure terminal
+interface gi0/1
+shutdown
+end
+
+Kontrollera:
+
+show spanning-tree
+show spanning-tree vlan 10
+
+När Gi0/1 är nere ska den alternativa vägen kunna ta över:
+
+SW-Nordvik-2 -> SW-Nordvik-3 -> SW-Nordvik-1
+
+Återställ länken:
+
+configure terminal
+interface gi0/1
+no shutdown
+end
+
+Kontrollera igen:
+
+show spanning-tree vlan 10
+
+
+==================================================
+17. SPARA KONFIGURATION
+==================================================
+
+Kör på varje router och switch:
+
+enable
+write memory
+
+eller kort:
+
+wr
+
+
+==================================================
+ADRESSÖVERSIKT
+==================================================
+
+VLAN 10 KONTOR
+Nät:     192.168.1.0/26
+Gateway: 192.168.1.1
+
+VLAN 20 EKONOMI
+Nät:     192.168.1.64/26
+Gateway: 192.168.1.65
+
+VLAN 30 GAST
+Nät:     192.168.1.128/26
+Gateway: 192.168.1.129
+
+VLAN 99 DRIFT
+Nät:            192.168.1.192/26
+Gateway:        192.168.1.193
+SW-Nordvik-1:   192.168.1.194
+SW-Nordvik-2:   192.168.1.195
+
+Göteborg–Borås
+Nät:          10.0.0.0/30
+R-Nordvik-1:  10.0.0.1
+R-Boras-1:    10.0.0.2
+
+Borås VLAN 40 LAGER
+Nät:     192.168.2.0/26
+Gateway: 192.168.2.1
+PC8:     192.168.2.10
+
+ISP
+Nät:          203.0.113.0/24
+R-Nordvik-1:  203.0.113.10
+R-ISP:        203.0.113.1
+
+
+==================================================
+KORT ORDNING ATT MEMORERA
+==================================================
+
+VLAN
+-> Accessportar
+-> Trunkar
+-> STP
+-> Router-on-a-stick
+-> Management
+-> DHCP
+-> Göteborg/Borås-länk
+-> Borås VLAN
+-> Statiska routes
+-> ISP
+-> Kontroll och tester
+-> STP failover
+-> Spara
