@@ -1,0 +1,141 @@
+Vecka 6 – Kontrollfrågor
+6.1 – Ge två olika skäl till att NAT behövs.
+
+Det finns inte tillräckligt med offentliga IPv4-adresser, så många enheter behöver kunna dela på få adresser. Två nätverk kan använda samma privata adresser och därför krocka, som Nordvik och Bergquist. För att privata adresser som 192.168.x.x används av många företag. NAT kan översätta adresser så att trafiken ändå kan fungera.
+
+6.2 – Vad betyder inside respektive outside, och sitter märkningen på nätet eller på interfacet?
+
+Inside – sidan där vårt eget nät finns.
+Outside – sidan mot omvärlden.
+
+6.3 – Vad skiljer Inside local från Inside global?
+
+Inside local – adressen enheten faktiskt har.
+Inside global – adressen omvärlden ser enheten som.
+
+6.4 – Vad gör PAT som statisk NAT inte gör?
+
+PAT låter många enheter dela på en offentlig IP-adress genom att även använda olika portnummer. Statisk NAT kopplar istället en intern adress till en bestämd offentlig adress.
+
+6.5 – Varför fungerar inte en förbindelse som börjar utifrån, utan särskild konfiguration?
+
+NAT-tabellen skapas när någon på insidan börjar kommunicera utåt. Om trafik bara kommer utifrån finns ingen översättning som talar om vilken intern dator trafiken ska till.
+
+6.6 – Vilket ord i NAT-kommandot gör det till PAT?
+
+overload
+
+6.7 – Varför är NAT ingen säkerhetsfunktion?
+
+Att datorer på utsidan normalt inte kan starta en anslutning till insidan är bara en bieffekt av NAT. NAT är inte en brandvägg.
+
+6.8 – Vilka två saker måste finnas på enheten innan crypto key generate rsa fungerar?
+
+Ett hostname och ett domännamn.
+
+6.9 – Vilken rad stänger dörren för telnet?
+
+transport input ssh
+
+6.10 – Nämn tre saker som ska bort ur en konfigurationsfil innan du committar den.
+
+Framför allt för det är känslig information som inte ska hamna i exempelvis ett GitHub-repo.
+
+6.11 – Skriv den engelska termen för vart och ett av följande: översättning, insida, utsida och sanering.
+
+Översättning = translation
+Insida = inside
+Utsida = outside
+Sanering = sanitization
+
+6.12 – Listan access-list 1 permit 192.168.1.0 0.0.0.255 släpper ut alla fyra VLAN på en gång. Skriv i stället fyra rader, en per VLAN, med rätt wildcard-mask för en /26.
+access-list 1 permit 192.168.1.0   0.0.0.63
+access-list 1 permit 192.168.1.64  0.0.0.63
+access-list 1 permit 192.168.1.128 0.0.0.63
+access-list 1 permit 192.168.1.192 0.0.0.63
+6.13 – Nordvik har 70 datorer på insidan och en offentlig adress. Varje dator har i snitt tolv samtidiga förbindelser. Hur många rader står det då i show ip nat translations? Räcker portnumren?
+
+show ip nat translations får ungefär 840 rader.
+
+6.14 – Här är en NAT-tabell. Hur många enheter på insidan syns i utdatan, och hur många offentliga adresser använder de?
+192.168.1.42
+192.168.1.42
+192.168.1.51
+
+Detta är inte 3 datorer. Det är 2 interna enheter och 1 offentlig IP: 203.0.113.10.
+
+6.15 – Här är ett utdrag från en router där ingenting kommer ut på internet. Vad är fel?
+
+Det står:
+
+Outside interfaces:
+GigabitEthernet0/0.10
+
+Inside interfaces:
+GigabitEthernet0/1
+
+De ska vara:
+
+G0/0.10 = inside
+G0/1 = outside
+6.16 – Skriv den fullständiga konfigurationen som ger gästnätet, och bara gästnätet, en väg ut via PAT. Alla andra nät ska lämnas orörda.
+
+Gästnätet är:
+
+192.168.1.128/26
+
+access-list 2 permit 192.168.1.128 0.0.0.63
+
+ip nat inside source list 2 interface GigabitEthernet0/1 overload
+
+interface GigabitEthernet0/0.30
+ip nat inside
+6.17 – Skriv de rader som krävs för att slå på SSH på en router som just startats med tom konfiguration. Ta med allt som behövs, i rätt ordning.
+hostname R-Nordvik-1
+
+ip domain-name nordvik.example
+
+username drift privilege 15 secret <losenord>
+
+crypto key generate rsa
+
+ip ssh version 2
+
+line vty 0 4
+transport input ssh
+login local
+
+line vty 5 15
+transport input ssh
+login local
+6.18 – Nordvik har köpt upp ett företag som använder samma adressrymd som Nordvik själva. Ledningen vill att ekonomiavdelningarna på de två kontoren ska kunna nå varandras filservrar, men inget annat ska kopplas ihop. Beskriv vad du gör, i vilken ordning, och vad du behöver komma överens om med den andra sidans tekniker innan du rör något.
+
+Svar:
+Du har inget svar på denna ännu.
+
+6.19 – Skriv fem meningar till en kollega som aldrig hört talas om NAT, där du förklarar hur sjuttio datorer kan dela på en enda adress.
+
+Svar:
+Du har inget svar på denna ännu.
+
+Viktigaste att kunna
+
+NAT = byter IP-adresser
+PAT = NAT + portnummer
+inside = vårt nät
+outside = omvärlden
+overload = gör det till PAT
+Inside local = IP:n datorn faktiskt har
+Inside global = IP:n omvärlden ser
+SSH = krypterad fjärrinloggning
+transport input ssh = tillåt SSH, inte Telnet
+Sanitization = ta bort känsliga uppgifter innan configen delas
+
+Inside local – adressen enheten faktiskt har, på insidan.
+Inside global – adressen omvärlden ser den som.
+Outside local – adressen insidan ser omvärlden som.
+Outside global – adressen omvärlden faktiskt har.
+
+Knepet är att läsa dem i två delar: Inside/Outside säger vems adress det är. Local/Global säger ur vilket perspektiv adressen ses.
+
+Obs: 6.10 och 6.13 är inte helt besvarade ännu. 6.10 frågar efter tre konkreta saker som ska tas bort, och 6.13 frågar också om portnumren räcker. 6.18 och 6.19 saknar svar helt.
