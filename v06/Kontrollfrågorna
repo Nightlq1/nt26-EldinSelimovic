@@ -33,13 +33,13 @@ Att datorer på utsidan normalt inte kan starta en anslutning till insidan är b
 
 Ett hostname och ett domännamn.
 
-6.9 – Vilken rad stänger dörren för telnet?
+6.9 – Vilken rad stänger dörren för Telnet?
 
 transport input ssh
 
 6.10 – Nämn tre saker som ska bort ur en konfigurationsfil innan du committar den.
 
-Framför allt för det är känslig information som inte ska hamna i exempelvis ett GitHub-repo.
+Lösenord, secrets och kryptografiska nycklar ska tas bort innan konfigurationen läggs upp i exempelvis ett GitHub-repo.
 
 6.11 – Skriv den engelska termen för vart och ett av följande: översättning, insida, utsida och sanering.
 
@@ -55,14 +55,16 @@ access-list 1 permit 192.168.1.128 0.0.0.63
 access-list 1 permit 192.168.1.192 0.0.0.63
 6.13 – Nordvik har 70 datorer på insidan och en offentlig adress. Varje dator har i snitt tolv samtidiga förbindelser. Hur många rader står det då i show ip nat translations? Räcker portnumren?
 
-show ip nat translations får ungefär 840 rader.
+70 × 12 = 840 rader i NAT-tabellen.
+
+Ja, portnumren räcker. PAT använder olika portnummer för att hålla isär de olika förbindelserna trots att alla delar på samma offentliga IP-adress.
 
 6.14 – Här är en NAT-tabell. Hur många enheter på insidan syns i utdatan, och hur många offentliga adresser använder de?
 192.168.1.42
 192.168.1.42
 192.168.1.51
 
-Detta är inte 3 datorer. Det är 2 interna enheter och 1 offentlig IP: 203.0.113.10.
+Detta är inte 3 datorer. Det är 2 interna enheter och 1 offentlig IP-adress: 203.0.113.10.
 
 6.15 – Här är ett utdrag från en router där ingenting kommer ut på internet. Vad är fel?
 
@@ -76,8 +78,8 @@ GigabitEthernet0/1
 
 De ska vara:
 
-G0/0.10 = inside
-G0/1 = outside
+GigabitEthernet0/0.10 = inside
+GigabitEthernet0/1 = outside
 6.16 – Skriv den fullständiga konfigurationen som ger gästnätet, och bara gästnätet, en väg ut via PAT. Alla andra nät ska lämnas orörda.
 
 Gästnätet är:
@@ -95,7 +97,7 @@ hostname R-Nordvik-1
 
 ip domain-name nordvik.example
 
-username drift privilege 15 secret <losenord>
+username drift privilege 15 secret <lösenord>
 
 crypto key generate rsa
 
@@ -110,32 +112,35 @@ transport input ssh
 login local
 6.18 – Nordvik har köpt upp ett företag som använder samma adressrymd som Nordvik själva. Ledningen vill att ekonomiavdelningarna på de två kontoren ska kunna nå varandras filservrar, men inget annat ska kopplas ihop. Beskriv vad du gör, i vilken ordning, och vad du behöver komma överens om med den andra sidans tekniker innan du rör något.
 
-Svar:
-Du har inget svar på denna ännu.
+Först tar jag reda på vilka adresser som överlappar mellan företagen. Sedan bestämmer vi tillsammans vilka översatta adresser som ska användas, så att de inte krockar. Därefter konfigurerar vi NAT så att ekonomiavdelningarnas adresser översätts när trafik går mellan företagen. Vi tillåter bara den trafik som behövs mellan ekonomiavdelningarnas filservrar. Innan något ändras måste båda sidor vara överens om vilka adresser som ska översättas och vilka nya adresser de ska översättas till.
 
 6.19 – Skriv fem meningar till en kollega som aldrig hört talas om NAT, där du förklarar hur sjuttio datorer kan dela på en enda adress.
 
-Svar:
-Du har inget svar på denna ännu.
+NAT översätter privata IP-adresser till en offentlig IP-adress.
+Med PAT kan alla 70 datorer dela på samma offentliga IP-adress.
+PAT använder olika portnummer för att skilja datorernas förbindelser åt.
+Routern sparar översättningarna i en NAT-tabell.
+När svar kommer tillbaka använder routern tabellen och portnumret för att skicka trafiken till rätt dator.
 
 Viktigaste att kunna
 
 NAT = byter IP-adresser
 PAT = NAT + portnummer
-inside = vårt nät
-outside = omvärlden
-overload = gör det till PAT
+Inside = vårt nät
+Outside = omvärlden
+Overload = gör det till PAT
 Inside local = IP:n datorn faktiskt har
 Inside global = IP:n omvärlden ser
 SSH = krypterad fjärrinloggning
 transport input ssh = tillåt SSH, inte Telnet
 Sanitization = ta bort känsliga uppgifter innan configen delas
 
-Inside local – adressen enheten faktiskt har, på insidan.
-Inside global – adressen omvärlden ser den som.
-Outside local – adressen insidan ser omvärlden som.
-Outside global – adressen omvärlden faktiskt har.
+Inside local = adressen enheten faktiskt har på insidan.
+Inside global = adressen omvärlden ser enheten som.
+Outside local = adressen insidan ser omvärlden som.
+Outside global = adressen enheten på utsidan faktiskt har.
 
-Knepet är att läsa dem i två delar: Inside/Outside säger vems adress det är. Local/Global säger ur vilket perspektiv adressen ses.
+Knepet: Läs dem i två delar:
 
-Obs: 6.10 och 6.13 är inte helt besvarade ännu. 6.10 frågar efter tre konkreta saker som ska tas bort, och 6.13 frågar också om portnumren räcker. 6.18 och 6.19 saknar svar helt.
+Inside / Outside = vems adress det är.
+Local / Global = vem som tittar.
